@@ -1,0 +1,30 @@
+require 'open-uri'
+require 'uri'
+require 'hpricot'
+require 'rubygems'
+doc=Hpricot(open('http://www.baidu.com/s?word=p&tn=95664794_hao_pg'))   #此链接为  “p” 在百度搜索中的 serp的link
+for i in 1..10                                                          #抓取百度搜索关键词结果页面排名前十的 超链接
+    doc.search("div[@id=#{i}]/h3/a").each do |r|
+        puts r.attributes["href"]
+    end
+end
+doc1=Hpricot(open('http://www.baidu.com/s?word=p&tn=95664794_hao_pg'))      #获取底部“相关搜索词”
+doc1.search("div[@id=rs]/table/tr/th/a").each do |c|
+    puts c.attributes["href"]
+end
+
+regex2=/\[(.*)\]/                               #利用suggestion来获取下拉框推荐词
+arr=Array.new
+arr2=Array.new
+str=String.new
+str=open('http://suggestion.baidu.com/su?wd=p&p=3&t=1273278850500').read(100000)
+str2=String.new
+str1=String.new
+arr=str.scan(regex2)
+str2=arr.join(",")
+str2.delete('"')
+arr2=str2.split(",")
+puts arr2                   #输出p的下拉框推荐词
+
+
+
